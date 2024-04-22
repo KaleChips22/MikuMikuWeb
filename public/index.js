@@ -357,6 +357,8 @@ function onClick(w, h) {
                     n.toggleTrace()
                 } else if (currentTool == TOOLS.STEP && n.type == nTYPES.STEP) {
                     n.toggleStep()
+                } else if (currentTool == TOOLS.GUIDE && n.type == nTYPES.GUIDE) {
+                    n.toggleColor()
                 }
             })
 
@@ -376,7 +378,7 @@ function onClick(w, h) {
             if ((nX - Math.floor(currentNoteSize / 2) >= -6 && (nX - Math.floor(currentNoteSize / 2) + currentNoteSize) <= 6) || currentTool > 8) {
                 if (currentTool == TOOLS.STEP) {
                     let options = []
-                    map.filter(n => n.type == nTYPES.HOLD || n.type == nTYPES.STEP).filter(n => n.data.child != null).forEach((n, i) => {
+                    map.filter(n => n.type == nTYPES.HOLD || n.type == nTYPES.STEP || n.type == nTYPES.GUIDE).filter(n => n.data.child != null).forEach((n, i) => {
                         // console.log(n.lane, n.beat, n.data.easeType, n.data.child.lane, n.data.child.beat)
                         let alphaP = (n.beat - nY) / (n.beat - n.data.child.beat)
                         let alpha = ([x => x, eO, eI])[n.data.easeType](alphaP)
@@ -408,17 +410,19 @@ function onClick(w, h) {
                     3,
                     0,
                     4,
-                    null,
+                    8,
                     null,
                     10,
                     11,
                     12
                 ]
+
                 let type = types[currentTool]
+                console.log(type)
 
                 let note = new Note(type, nX + (0.5 * (currentNoteSize % 2 == 1)), nY, currentNoteSize / 2, {})
 
-                if (note.type == nTYPES.HOLD) {
+                if (note.type == nTYPES.HOLD || note.type == nTYPES.GUIDE) {
                     let note2 = new Note(type, nX + (0.5 * (currentNoteSize % 2 == 1)), nY + .125, currentNoteSize / 2, { holdPos: 1 })
                     map.append(note2)
 
@@ -444,7 +448,7 @@ function drawGhostNote(w, h, nX, nY) {
         3,
         0,
         4,
-        null,
+        8,
         null,
         10,
         11,

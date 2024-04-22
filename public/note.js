@@ -12,11 +12,12 @@ const nTYPES = {
     STEP: 3,
     BPM: 4,
     TSG: 5,
-    HSP: 6
+    HSP: 6,
+    GUIDE: 7
 }
 
 class Note {
-    constructor(type, lane, beat, size, data) {
+    constructor(_type, lane, beat, size, data) {
         if (typeof type == 'object') {
             for (let [key, val] of Object.entries(type)) {
                 this[key] = val
@@ -24,7 +25,7 @@ class Note {
 
             this.setDrawType()
         } else {
-            this.type = parseInt(type)
+            let type = parseInt(_type)
             this.lane = lane
             this.beat = beat
             this.size = size
@@ -43,7 +44,9 @@ class Note {
                 trace: false,
                 info: null,
                 channel: null,
-                parsed: false
+                parsed: false,
+                hidden: false,
+                color: 2
             }
 
             for (let [key, val] of Object.entries(data)) {
@@ -76,6 +79,12 @@ class Note {
                 this.data.holdPos = 2
                 this.data.stepType = 0
                 this.data.easeType = 0
+            } else if (type == 8) {
+                this.type = nTYPES.GUIDE
+                this.data.holdPos = 2
+                this.data.stepType = 0
+                this.data.easeType = 0
+                this.data.fadeType = 1
             } else if (type == 10) {
                 this.type = nTYPES.BPM
                 this.data.notNote = true
@@ -506,6 +515,23 @@ class Note {
         if (this.data.easeType == 3) this.data.easeType = 0
     }
 
+    toggleColor() {
+        this.data.color ++
+        if (this.data.color >= 8) this.data.color = 0
+
+        let r = this
+        while (r.data.child != null) {
+            r.data.child.data.color = this.data.color
+            r = r.data.child
+        }
+
+        r = this
+        while (r.data.parent != null) {
+            r.data.parent.data.color = this.data.color
+            r = r.data.parent
+        }
+    }
+
     toggleStep() {
         this.data.stepType ++
         if (this.data.stepType > 2) this.data.stepType = 0
@@ -551,6 +577,7 @@ class Note {
         }
 
         if (this.data.child) {
+            // console.log(this)
             let c = this.data.child
 
             while (c.data.stepType == 2) {
@@ -562,11 +589,22 @@ class Note {
             let startBeat = this.beat
             let endBeat = c.beat
 
+            // console.log(startBeat, startLane, endBeat, endLane)
+
             let sPy = h - (startBeat) * i
             let ePy = h - (endBeat) * i
 
+            let color = 0
+
             let img = new Image()
             img.src = 'textures/longNoteLine.png'
+
+            if (this.type == nTYPES.GUIDE) {
+                img.src = 'textures/guideColors.png'
+                color = 1 + 3 * this.data.color
+            } else {
+                color = this.data.critical ? 9 : 0
+            }
 
             //console.log(sPy, ePy)
             
@@ -584,14 +622,25 @@ class Note {
                 let dSize = lerp(this.size, this.data.child.size, alpha) * 2
                 let nX = (lerp(startLane, endLane, alpha) - dSize / 2) * xScale + w / 2
 
+
+                // console.log(dSize)
+
                 if (!(j + yOff < h && j + yOff > 0)) {
                     continue
+                }
+
+                if (this.type == nTYPES.GUIDE) {
+                    if (this.data.fadeType == 1) {
+                        ctx.globalAlpha = 0.75 * remap(alphaP, 0, 1, .25, 1)
+                    } else if (this.data.fadeType == 2) {
+                        ctx.globalAlpha = 0.75 * remap(1 - alphaP, 0, 1, .25, 1)(1 - alphaP)
+                    }
                 }
                 
                 ctx.drawImage(
                     img,
                     32,
-                    this.data.critical ? 9 : 0,
+                    color,
                     242,
                     1,
                     nX,
@@ -607,6 +656,10 @@ class Note {
         let i = (h / 12) * yScale
 
         if (!(this.beat * i > yOff && this.beat * i < yOff + h)) {
+            return
+        }
+
+        if (this.type == nTYPES.GUIDE) {
             return
         }
         
@@ -639,7 +692,7 @@ class Note {
             return
         }
 
-        if (this.type != nTYPES.STEP) {
+        if (this.type != nTYPES.STEP && this.data.hidden == false) {
 
             // Start Piece
             ctx.drawImage(
@@ -791,7 +844,7 @@ class NoteList extends Array {
                 var notes = obj.connections
                 var ns = []
                 notes.forEach(hit => {
-                    console.log(hit)
+                    // console.log(hit)
                     var n = new Note(1, hit.lane, hit.beat, hit.size, {})
                     if (hit.type == 'start') {
                         n.data.holdPos = 0
@@ -810,10 +863,12 @@ class NoteList extends Array {
                         n.data.stepType = 2
                         n.data.holdPos = 3
                     } else {
-                        console.log(hit.type)
+                        // console.log(hit.type)
                     }
                     if (hit.judgeType == 'trace') {
                         n.data.trace = true
+                    } else if (hit.judgeType == 'none') {
+                        n.data.hidden = true
                     }
                     if (hit.direction) {
                         n.data.flick = true
@@ -831,7 +886,7 @@ class NoteList extends Array {
                     } else if (hit.ease == 'out') {
                         n.data.easeType = 1
                     }
-                    console.log(n)
+                    n.data.critical = obj.critical
                     ns.push(n)
                 })
                 ns.forEach((n, i) => {
@@ -842,11 +897,56 @@ class NoteList extends Array {
                         n.data.child = ns[i + 1]
                     }
                     n.setDrawType()
-                    console.log(n.data.easeType)
+                    // console.log(n.data.easeType)
                     this.push(n)
                 })
-            } else {
-                console.log(obj.type)
+            } else if (obj.type == 'bpm') {
+                // console.log(obj)
+                let n = new Note(10, 0, obj.beat, 6, { info: obj.bpm })
+                this.push(n)
+            } else if (obj.type == 'timeScaleGroup') {
+                obj.changes.forEach(x => {
+                    var n = new Note(12, 0, x.beat, 6, { info: x.timeScale })
+                    this.push(n)
+                })
+            } else if (obj.type == 'guide') {
+                console.log(obj)
+                var notes = obj.midpoints
+                var ns = []
+                notes.forEach(hit => {
+                    var n = new Note(8, hit.lane, hit.beat, hit.size, {})
+                    if (hit.ease == 'linear') {
+                        n.data.easeType = 0
+                    } else if (hit.ease == 'in') {
+                        n.data.easeType = 2
+                    } else if (hit.ease == 'out') {
+                        n.data.easeType = 1
+                    }
+                    let key = {
+                        white: 0,
+                        red: 1,
+                        green: 2,
+                        purple: 3,
+                        yellow: 4,
+                        pink: 5,
+                        blue: 6,
+                        black: 7
+                    }
+                    n.data.color = key[obj.color]
+                    n.data.fadeType = obj.fade
+                    ns.push(n)
+                })
+                ns.forEach((n, i) => {
+                    if (i != 0) {
+                        n.data.parent = ns[i - 1]
+                    }
+                    if (i != ns.length - 1) {
+                        n.data.child = ns[i + 1]
+                    }
+                    n.setDrawType()
+                    // console.log(n.data.easeType)
+                    this.push(n)
+                })
             }
         })
     }
@@ -910,7 +1010,7 @@ class NoteList extends Array {
     remove(idx) {
         let n = this[idx]
 
-        if (n.type == nTYPES.HOLD) {
+        if (n.type == nTYPES.HOLD || n.type == nTYPES.GUIDE) {
         
             if (n.data.parent) {
                 n.data.parent.data.child = null
