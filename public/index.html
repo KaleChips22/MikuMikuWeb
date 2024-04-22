@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MikuMikuPlus</title>
+    <link rel="stylesheet" href="index.css">
+    <meta name="description" content="A web-based chart editor and designer for Project Sekai and Chart Cyanvas">
+</head>
+<body>
+    <div id="nav">
+        <nav id="nav-buttons">
+            <ul>
+                <li><span id="uscSave">Save To USC</span></li>
+                <li><span id="uscLoad">Load From USC</span></li>
+                <li><span id="help">Help</span></li>
+            </ul>
+        </nav>
+        <div id="tool-palette">
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;</div>
+            <div>Toolbar</div>
+            <div>&nbsp;&nbsp;&nbsp;&nbsp;</div>
+            <div class="divider"></div>
+            <div class="tool mouseTool">
+
+            </div>
+            <div class="tool mouseTool">
+
+            </div>
+            <div class="tool mouseTool">
+
+            </div>
+            <div class="tool mouseTool">
+
+            </div>
+            <div class="tool mouseTool">
+
+            </div>
+            <div class="tool mouseTool">
+
+            </div>
+            <div class="tool mouseTool">
+
+            </div>
+            <div class="tool mouseTool">
+
+            </div>
+            <div class="tool mouseTool">
+
+            </div>
+            <div class="tool mouseTool">
+
+            </div>
+            <div class="tool mouseTool">
+
+            </div>
+            <div class="tool mouseTool">
+
+            </div>
+        </div>
+    </div>
+    <div class="main">
+        <div class="editor">
+            <div class="tablist">
+                <div class="tab">
+                    current
+                </div>
+            </div>
+            <canvas id="editor">
+
+            </canvas>
+            <div class="extra-options">
+                MikuMikuPlus for Web (<span id="version"></span>)
+            </div>
+        </div>
+        <div class="properties">
+            <div class="propertiestab">
+                <div class="tablist">
+                    <div class="tab">
+                        ChartProperties
+                    </div>
+                </div>
+                <main>
+                    <section>
+                        <h2>Metadata</h2>
+                        <div class="half-vert">
+                            <div class="labels">
+                                <label for="title">Title</label>
+                                <label for="designer">Designer</label>
+                                <label for="artist">Artist</label>
+                                <label for="jacket">Jacket</label>
+                            </div>
+                            <div class="inputs">
+                                <input type="text" name="title" id="title">
+                                <input type="text" name="designer" id="designer">
+                                <input type="text" name="artist" id="artist">
+                                <input type="file" name="jacket" id="jacket" accept=".png, .jpg">
+                            </div>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Audio</h2>
+                        <div class="half-vert">
+                            <div class="labels">
+                                <label for="musicf">Music File</label>
+                                <label for="musico">Music Offset</label>
+                                <label for="mvolume">Master Volume</label>
+                                <label for="bgmvolume">BGM Volume</label>
+                                <label for="sevolume">SE Volume</label>
+                            </div>
+                            <div class="inputs">
+                                <input type="file" name="musicf" id="musicf" accept=".wav, .mp3">
+                                <input type="number" name="musico" id="musico">
+                                <input type="number" name="mvolume" id="mvolue" min="0" max="100">
+                                <input type="number" name="bgmvolume" id="bgmvolue" min="0" max="100">
+                                <input type="number" name="sevolume" id="sevolue" min="0" max="100">
+                            </div>
+                        </div>
+                    </section>
+                    <section>
+                        <h2>Statistics</h2>
+                        <div class="half-vert">
+                            <div class="labels">
+                                <label>Taps</label>
+                                <label>Flicks</label>
+                                <label>Holds</label>
+                                <label>Hold Mids</label>
+                                <label>Traces</label>
+                                <label>Total</label>
+                            </div>
+                            <div class="inputs">
+                                <span id="tapsCt">0</span>
+                                <span id="flicksCt">0</span>
+                                <span id="holdsCt">0</span>
+                                <span id="holdMidsCt">0</span>
+                                <span id="tracesCt">0</span>
+                                <span id="totalCt">0</span>
+                            </div>
+                        </div>
+                    </section>
+                </main>
+            </div>
+            <div class="optionstab">
+                <div class="tablist">
+                    <div class="tab">
+                        Options
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="#" id="download" download="file.sus" target="_blank">Donwl</a>
+    <script src="note.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>

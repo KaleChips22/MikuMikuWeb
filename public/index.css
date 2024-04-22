@@ -1,0 +1,242 @@
+:root {
+    --c-bg-main: #242424;
+    --c-bg-dark: #212121;
+    --c-bg-light: #323232;
+
+    --c-main: #fff;
+
+    --c-accent: #82ccd1;
+}
+
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+    font-family: sans-serif;
+    user-select: none;
+}
+
+html {
+    background-color: red;
+    color: var(--c-main);
+
+    overflow: hidden;
+}
+
+body {
+    height: 100vh;
+    max-height: 100vh;
+}
+
+#nav {
+
+    padding: 3px;
+
+    display: flex;
+    flex-direction: column;
+
+    background-color: var(--c-bg-main);
+}
+
+#nav-buttons {
+    width: 100%;
+    height: 100%;
+
+    & ul {
+        width: 100%;
+        height: 100%;
+
+        display: flex;
+        align-items: center;
+        justify-content: left;
+    }
+
+    & li {
+        list-style: none;
+        font-size: 15px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: var(--c-bg-light);
+        }
+    }
+
+    & span {
+        padding: 10px;
+    }
+}
+
+#tool-palette {
+    background-color: var(--c-bg-main);
+    padding: 2px;
+
+    display: flex;
+    gap: 2px;
+    align-items: center;
+    justify-content: left;
+}
+
+.tool {
+    width: 30px;
+    aspect-ratio: 1 / 1;
+    cursor: pointer;
+    border-radius: 3px;
+
+    &:hover {
+        background-color: var(--c-bg-light);
+    }
+
+    &.selected {
+        background-color: var(--c-accent);
+    }
+
+    & img {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+.divider {
+    width: 2px;
+    height: 30px;
+    background-color: var(--c-bg-light);
+    border-radius: 2px;
+    margin: 0 2px;
+}
+
+.main {
+    width: 100%;
+    height: calc(100% - 57px);
+
+    background-color: var(--c-bg-main);
+
+    display: grid;
+    grid-template-columns: 7fr 2fr;
+    gap: 3px;
+
+    &.help {
+        padding: 10px;
+        height: 100%;
+
+        display: flex;
+        flex-direction: column;
+
+        align-items: start;
+        justify-content: left;
+    }
+}
+
+.editor {
+    width: 100%;
+    height: 100%;
+    position: relative;
+
+    background: #888;
+    background-image: url(textures/default.png);
+    background-size: cover;
+    background-position: 50%;
+    background-blend-mode: multiply;
+}
+
+#editor {
+    translate: 0 29px;
+}
+
+.extra-options {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    padding: 3px;
+    background-color: var(--c-bg-light);
+}
+
+.properties {
+    width: 100%;
+    height: 100%;
+
+    background: red;
+
+    display: grid;
+
+    grid-template-rows: 2fr 1fr;
+}
+
+.propertiestab {
+    width: 100%;
+    height: 100%;
+
+    background: var(--c-bg-light);
+    position: relative;
+}
+
+.optionstab {
+    width: 100%;
+    height: 100%;
+
+    background: var(--c-bg-light);
+    position: relative;
+}
+
+.tablist {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    background-color: var(--c-bg-dark);
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    padding: 3px 3px 0 3px;
+    gap: 2px;
+
+    & .tab {
+        padding: 4px 8px;
+        border-radius: 3px 3px 0 0;
+        background-color: var(--c-bg-light);
+    }
+}
+
+main {
+    margin-top: 30px;
+}
+
+section {
+    padding: 10px;
+}
+
+.half-vert {
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 2px;
+    padding: 3px;
+}
+
+.labels,
+.inputs {
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 3px;
+
+    & input {
+        border: none;
+        border-radius: 4px;
+        background-color: var(--c-bg-main);
+
+        text-align: left;
+
+        color: white;
+        font-size: 15px ;
+    }
+}
+
+h1 {
+    font-size: 30px;
+}

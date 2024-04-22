@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help | MikuMikuPlus</title>
+    <link rel="stylesheet" href="../index.css">
+</head>
+<body>
+    <div id="nav">
+        <nav id="nav-buttons">
+            <ul>
+                <li><span id="back">Back</span></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="main help">
+        <h1>Help</h1>
+        <section>
+            <h2>Basics</h2>
+            <p>
+                Click a tool in the top to select it.
+                <br>
+                Then, click in the chart to add it to the map
+                <br><br>
+                When you place a time modifier (BPM, Time Signature Changer, or Hi-Speed Change), it will prompt you for the updated info
+                <br><br>
+                The mouse tool will let you move notes
+            </p>
+        </section>
+        <section>
+            <h2>Saving</h2>
+            <p>
+                "Save SUS" (CTRL + ALT + S) will export to a file.<br>
+                This file <strong>cannot</strong> be loaded back into this program
+                <br><br>
+                "Save MMW" (CTRL + S) will export to a file.<br>
+                This file <strong>can</strong> be loaded back into this program, with "Load MMW" (CTRL + L)
+                <br><br>
+            </p>
+        </section>
+    </div>
+    <script>
+        document.getElementById("back").onclick = e => window.location.href = '..'
+    </script>
+</body>
+</html>
