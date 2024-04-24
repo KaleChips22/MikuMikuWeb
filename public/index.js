@@ -1,6 +1,8 @@
-const VERSION = '1.4.0'
+const VERSION = '0.4.1b'
 
 document.getElementById("version").innerText = VERSION
+
+const menuArea = document.getElementById("menu-area")
 
 const canvas = document.getElementById("editor")
 const ctx = canvas.getContext("2d")
@@ -116,6 +118,115 @@ function select(e) {
 
 canvas.addEventListener("mousedown", () => { mouseDown = true })
 canvas.addEventListener("mouseup", () => { mouseDown = false })
+canvas.addEventListener("contextmenu", e => {
+    e.preventDefault()
+    // Menu:
+    /*
+    Delete
+    ---
+    Cut
+    Copy
+    Paste
+    Flip Paste
+    Flip
+    ---
+    Ease Type >
+    Step Type >
+    Flick Type >
+    Hold Type >
+    Fade Type >
+    Guide Color >
+    layer >
+    ---
+    Shrink Up
+    Shrink Down
+    ---
+    Connect Holds
+    Split Hold
+    ---
+    Interpolate Hi Speeds
+    */
+    
+    let menu = document.createElement('div')
+    menu.classList.add('menu')
+    menuArea.innerHTML = ''
+    menuArea.appendChild(menu)
+    menu.style.left = e.offsetX + 'px'
+    menu.style.top = e.offsetY + 'px'
+    menu.innerHTML = `
+        <div onclick="">Delete</div>
+        <div class="divider"></div>
+        <div onclick="">Cut</div>
+        <div onclick="">Copy</div>
+        <div onclick="">Paste</div>
+        <div onclick="">Flip Paste</div>
+        <div onclick="">Flip</div>
+        <div class="divider"></div>
+        <div class="sub">
+            Ease Type
+            <div class="submenu">
+                <div onclick="">Linear</div>
+                <div onclick="">In</div>
+                <div onclick="">Out</div>
+                <div onclick="">In Out</div>
+                <div onclick="">Out In</div>
+            </div>
+        </div>
+        <div class="sub">
+            Step Type
+            <div class="submenu">
+                <div onclick="">Normal</div>
+                <div onclick="">Hidden</div>
+                <div onclick="">Skip</div>
+            </div>
+        </div>
+        <div class="sub">
+            Flick Type
+            <div class="submenu">
+                <div onclick="">None</div>
+                <div onclick="">Default</div>
+                <div onclick="">Left</div>
+                <div onclick="">Right</div>
+            </div>
+        </div>
+        <div class="sub">
+            Hold Type
+            <div class="submenu">
+                <div onclick="">Normal</div>
+                <div onclick="">Hidden</div>
+            </div>
+        </div>
+        <div class="sub">
+            Fade Type
+            <div class="submenu">
+                <div onclick="">Fade Out</div>
+                <div onclick="">No Fade</div>
+                <div onclick="">Fade In</div>
+            </div>
+        </div>
+        <div class="sub">
+            Guide Color
+            <div class="submenu">
+                <div onclick="">Neutral</div>
+                <div onclick="">Red</div>
+                <div onclick="">Green</div>
+                <div onclick="">Blue</div>
+                <div onclick="">Yellow</div>
+                <div onclick="">Purple</div>
+                <div onclick="">Cyan</div>
+                <div onclick="">Black</div>
+            </div>
+        </div>
+        <div class="divider"></div>
+        <div onclick="">Shrink Up</div>
+        <div onclick="">Shrink Down</div>
+        <div class="divider"></div>
+        <div onclick="">Connect Holds</div>
+        <div onclick="">Split Hold</div>
+        <div class="divider"></div>
+        <div onclick="">Interpolate Hi Speeds</div>
+    `
+})
 
 // setInterval(() => {
     
@@ -163,6 +274,7 @@ function draw(w, h, dt) {
 
     if (mouseDown) {
         mouseDownFrames++
+        menuArea.innerHTML = ''
         
         if (currentTool == TOOLS.MOUSE) {
             if (cNote !== null) {

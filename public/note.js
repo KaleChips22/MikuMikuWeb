@@ -16,6 +16,8 @@ const nTYPES = {
     GUIDE: 7
 }
 
+let noteHeight = 25
+
 class Note {
     constructor(_type, lane, beat, size, data) {
         if (typeof type == 'object') {
@@ -671,9 +673,9 @@ class Note {
             ]
             ctx.fillStyle = cs[this.drawType - 10]
             ctx.fillRect(
-                -6 * xScale + w / 2,
+                6 * xScale + w / 2,
                 h - this.beat * i + yOff,
-                xScale * (12 + this.drawType - 9),
+                xScale * (this.drawType - 9),
                 2.5
             )
             ctx.font = '14px sans-serif'
@@ -701,10 +703,10 @@ class Note {
                 this.spriteCut[1],
                 this.spriteCut[2] / 3,
                 this.spriteCut[3],
-                (this.lane - 0.5 - this.size) * xScale + w / 2,
-                h - (this.beat) * i + yOff - 25,
-                this.spriteCut[2] / (4 * 3),
-                this.spriteCut[3] / 4
+                (this.lane - 0.5 - this.size) * xScale + w / 2 + 2,
+                h - (this.beat) * i + yOff - noteHeight / 2,
+                noteHeight,
+                noteHeight
             )
 
             // Mid Piece
@@ -714,10 +716,10 @@ class Note {
                 this.spriteCut[1],
                 this.spriteCut[2] / 3,
                 this.spriteCut[3],
-                (this.lane + 0.5 - this.size) * xScale + w / 2 - 1,
-                h - (this.beat) * i + yOff - 25,
-                (this.spriteCut[2] * (this.size * 2 - 1)) / (4 * 3) + this.size + 1,
-                this.spriteCut[3] / 4
+                (this.lane + 0.5 - this.size) * xScale + w / 2 - noteHeight / 4 + 3,
+                h - (this.beat) * i + yOff - noteHeight / 2,
+                (this.spriteCut[2] * (this.size * 2 - 1)) / (4 * 3) + noteHeight / 4 + this.size,
+                noteHeight
             )
 
             // End Piece
@@ -727,10 +729,10 @@ class Note {
                 this.spriteCut[1],
                 this.spriteCut[2] / 3,
                 this.spriteCut[3],
-                (this.lane - 0.5 + this.size) * xScale + w / 2,
-                h - (this.beat) * i + yOff - 25,
-                this.spriteCut[2] / (4 * 3),
-                this.spriteCut[3] / 4
+                (this.lane - 0.5 + this.size) * xScale + w / 2 + 2,
+                h - (this.beat) * i + yOff - noteHeight / 2,
+                noteHeight,
+                noteHeight
             )
 
             // Flick
@@ -748,9 +750,9 @@ class Note {
                     this.flickSpriteCut[2],
                     this.flickSpriteCut[3],
                     (flip * (this.lane - Math.min(this.size, 3)) * xScale + w / 2 - 1),
-                    h - (this.beat + 0.04 * Math.min(this.size, 3) + 0.15) * i + yOff,
+                    h - (this.beat + 0.04 * Math.min(this.size, 3)) * i + yOff - noteHeight / 2,
                     flip * ((this.spriteCut[2] * (Math.min(this.size, 3) * 2)) / (4 * 3) + 1),
-                    this.flickSpriteCut[3] / 4
+                    this.flickSpriteCut[3] / 8
                 )
                 if (this.data.flickDir == 2) {
                     flip = -1
@@ -760,7 +762,7 @@ class Note {
             }
         }
 
-        if (this.type == nTYPES.STEP) {
+        if (this.type == nTYPES.STEP || this.type == nTYPES.GUIDE) {
             ctx.strokeStyle = '#fff'
             ctx.strokeRect(
                 (this.lane - this.size) * xScale + w / 2 - 1,
@@ -802,10 +804,10 @@ class Note {
                 this.stepSpriteCut[1],
                 this.stepSpriteCut[2],
                 this.stepSpriteCut[3],
-                (lane - 0.75) * xScale + w / 2 - 1,
-                h - (this.beat) * i + yOff - 25,
-                this.spriteCut[3] / 4,
-                this.spriteCut[3] / 4
+                (lane - 0.75) * xScale + w / 2 - 1 + noteHeight / 2,
+                h - (this.beat) * i + yOff - noteHeight / 2,
+                noteHeight,
+                noteHeight
             )
         }
     }
@@ -1010,18 +1012,22 @@ class NoteList extends Array {
     remove(idx) {
         let n = this[idx]
 
-        if (n.type == nTYPES.HOLD || n.type == nTYPES.GUIDE) {
-        
-            if (n.data.parent) {
-                n.data.parent.data.child = null
-                this.remove(this.indexOf(n.data.parent))
-                n.data.parent = null
-            }
+        if (n == undefined) return
 
+        if (n.type == nTYPES.HOLD || n.type == nTYPES.GUIDE) {
             if (n.data.child) {
-                n.data.child.data.parent = null
-                this.remove(this.indexOf(n.data.child))
-                n.data.child = null
+                let r = n.data.child
+                while (r != null) {
+                    this.splice(this.indexOf(r))
+                    r = r.data.child
+                }
+            }
+            if (n.data.parent) {
+                let r = n.data.parent
+                while (r != null) {
+                    this.splice(this.indexOf(r))
+                    r = r.data.parent
+                }
             }
         } else if (n.type == nTYPES.STEP) {
             n.data.parent.data.child = n.data.child
